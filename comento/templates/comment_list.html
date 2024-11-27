@@ -1,0 +1,84 @@
+<!--ベーステンプレートを適用する-->
+{% extends 'base.html' %}
+
+<!-- 静的ファイルのURLを生成するstaticタグをロードする -->
+{% load static %}
+
+        <!-- ページタイトル -->
+        {% block title %}Djang's Blog{% endblock %}
+        <!--Page header-->
+        <!-- ヘッダーの背景イメージのリンク先url()の引数をstaticタグに書き換え -->
+        {% block header %}
+
+        <header class="py-5 bg-light border-bottom mb-4"style="background-image: url({% static 'assets/img/home-bg.jpg' %})">
+          <div class="container">
+              <div class="text-center my-5">
+                  <h1 class="fw-bolder">掲示板</h1>
+                  <p class="lead mb-0">常識の範囲内で、良心的な姿勢で投稿してください。</p>
+              </div>
+          </div>
+        </header>
+        {% endblock %}
+
+        <!-- Main Content-->
+
+        {% block contents %}
+
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    
+                    <!--レコードを1行ずつ取り出す-->
+                    {% for record in object_list %}
+                    <!-- Post preview-->
+                    <div class="post-preview">
+                         
+                          <!--記事のタイトルを表示-->
+                            <h3 class="post-title">
+                               {{record.title}}</h3>
+                               <p>{{record.user.username}}</p>
+                            <!--投稿記事の本文-->
+                            <h4 class="post-subtitle">
+                                <span style="font-size: 14pt;">
+                                  
+                                   {{record.content|truncatechars:50}}
+                                 </span>
+                            </h4>
+                        
+                         
+                            <!--ページの最上部にリンクする-->
+                            <a href="{% url 'novelapp:index' %}">naroyama</a>
+                            <!--posted_atフィールドを出力-->
+                            {{record.posted_at}}に投稿
+                            <br>
+                            <br>
+                            {% if request.user == record.user %}
+                            <form method="POST">
+                            <!-- リンク先のURL
+                                  photo/<Photo postsテーブルのid値>/delete/-->
+                            <a href="{% url 'comento:comment_delete' record.pk %}"
+                                class="btn btn-primary my-2">削除する</a>
+                            {% endif %}
+                    </div>
+                    <!-- Divider-->
+                    <hr class="my-4" />
+                    
+                    <!--forによる繰り返しはここまで-->
+                    {% endfor %}
+                    <!-- Pager-->
+                     <!--ページネーション-->
+                    {% include "pagination.html" %}
+                </div>
+                <div class='text-center'>
+                  <div class='button'type='submit'><a href="{% url 'comento:post_comment' %}">
+                    <h5>コメントを投稿する</h5></a>
+                  </div>
+                </div>
+            </div>
+        </div>
+        
+        
+
+
+        {% endblock %}
+        

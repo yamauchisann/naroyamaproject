@@ -1,0 +1,71 @@
+<!-- ベーステンプレートを適用する-->
+{% extends 'base.html' %}
+<!-- ヘッダー情報のページタイトルを設定する-->
+{% block title %}Mypage{% endblock %}
+
+      {% block contents %}
+      
+      <!-- タイトルテンプレートは組み込まない-->
+      
+      <!-- ユーザーの投稿件数を表示-->
+      {% if user.is_authenticated %}
+        <br>
+        <div style="text-align:center">
+          <h4>{{user.username}}さんのマイページ</h4>
+          {% if object_list.count == 0 %}
+            <p>{{user.username}}さんの投稿はありません</p>
+          {% else %}
+            <p>投稿<strong>{{object_list.count}}</strong>件</p>
+          {% endif %}
+          <a href="{% url 'novelapp:post' %}">投稿する</a>
+        </div>
+        <hr>
+      {% endif %}
+      <div class="container">
+        <div class="row">
+            <!-- Blog entries-->
+            
+            <div class="col-lg-8">
+                <!-- Featured blog post-->
+                <div class="card mb-4">
+                    <a href="#!"><img class="card-img-top" src="https://placehold.jp/180/7fff7f/ff7f7f/1280x854.png?text=投稿の手引き" alt="..." /></a>
+                    <div class="card-body">
+                        <div class="small text-muted">202411/20</div>
+                        <h2 class="card-title">投稿の手引き</h2>
+                        <p class="card-text">このサイトの使い方を投稿しました。わからないことがあれば詳細をご確認してください</p>
+                        <a class="btn btn-primary" href="{% url 'novelapp:admin_detail' %}">詳細はこちらに →</a>
+                    </div>
+                </div>
+                <!-- Nested row for non-featured blog posts-->
+                
+                <div class="row">
+                {% for record in object_list %}
+                    <div class="col-lg-6">
+                        <!-- Blog post-->
+                        
+                        <div class="card mb-4">
+                            
+                            {% if record.image1 %}
+                            <img class="card-img-top" src="{{ record.image1.url }}" width="100%"/>
+                            {% else %}
+                            <a><img class="card-img-top" src="https://placehold.jp/200/000000/ffffff/1280x854.png?text=Sample" alt="..."/></a>
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{record.posted_at}}</div>
+                                <h2 class="card-title h4">{{record.title}}</h2>
+                                <button type="button">{{record.category.title}}</button>
+                                <p class="card-text">{{record.comment}}</p>
+                                <div class="text-center">
+                                    <a class="btn btn-primary" href="{% url 'novelapp:post_detail' record.pk %}">Read more →</a>
+                                </div>
+                                <br>
+                                <div class="text-center">
+                                    <p><button type="button"class=''>ユーザー名:{{record.user.username}}</p</button>
+                                </div>
+                            </div>
+                        </div>         
+                    </div>
+                    {% endfor %}
+                </div>
+                {% include 'pagination.html' %}
+                {% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %}My Way{% endblock %}
+        
+        {% block contents %}
+        <!-- Page header with logo and tagline-->
+        <header class="py-5 bg-light border-bottom mb-4"style="background-image: url({% static 'assets/img/home-bg.jpg' %})">
+            <div class="container">
+                <div class="text-center my-5">
+                    {% if user.is_authenticated %}
+                    <h1 class="fw-bolder">ようこそ!{{user.username}}さん</h1>
+                    <p class="lead mb-0">小説の世界に飛び込もう</p>
+
+                    {% else %}
+                    <h1 class="fw-bolder">ようこそ!</h1>
+                    <p class="lead mb-0">小説の世界に飛び込もう</p>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+        <!-- Page content-->
+        <div class="container">
+            <div class="row">
+                <!-- Blog entries-->
+                
+                <div class="col-lg-8">
+                    <!-- Featured blog post-->
+                    <div class="card mb-4">
+                        <a href="#!"><img class="card-img-top" src="https://placehold.jp/180/7fff7f/ff7f7f/1280x854.png?text=投稿の手引き" alt="..." /></a>
+                        <div class="card-body">
+                            <div class="small text-muted">202411/20</div>
+                            <h2 class="card-title">投稿の手引き</h2>
+                            <p class="card-text">このサイトの使い方を投稿しました。わからないことがあれば詳細をご確認してください</p>
+                            <a class="btn btn-primary" href="{% url 'novelapp:admin_detail' %}">詳細はこちらに →</a>
+                        </div>
+                    </div>
+                    <!-- Nested row for non-featured blog posts-->
+                    
+                    
+                    <div class="row">
+                        
+                    {% for record in object_list %}
+                        <div class="col-lg-6">
+                            <!-- Blog post-->
+                            
+                            <div class="card mb-4">
+                                
+                                {% if record.image1 %}
+                                <img class="card-img-top"src="{{ record.image1.url }}" />
+                                {% else %}
+                                <a><img class="card-img-top" src="https://placehold.jp/200/000000/ffffff/1280x854.png?text=Sample" alt="..."/></a>
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="small text-muted">{{record.posted_at}}</div>
+                                    <h2 class="card-title h4">{{record.title}}</h2>
+                                    <button type="button">{{record.category.title}}</button>
+                                    <p class="card-text">{{record.comment|truncatechars:10}}</p>
+                                    <div class="text-center">
+                                        <a class="btn btn-primary" href="{% url 'novelapp:post_detail' record.pk %}">詳細へ→</a>
+                                    </div>
+                                    <br>
+                                    <div class="text-center">
+                                        <p><a href="{% url 'novelapp:user_list' record.user_id %}"><button type="button"class=''>ユーザー名:{{record.user.username}}</button></a></p>
+                                    </div>
+                                </div>
+                            </div>         
+                        </div>
+                        {% empty %}
+                        <hr>
+                        <div class="text-center">
+                            <h2>投稿はありません</h2>
+                            <h4>一番乗りに投稿しよう</h4>
+                            <br>
+                            <a href="{% url 'novelapp:post' %}"><h4>投稿する</h4></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Pagination-->
+                    
+                    {% include 'Pagination.html' %}
+                    
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Search widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">検索</div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                
+                                <form method="get">
+                                    <input type="search" value="{{ request.GET.query }}" 
+                                           name="query" type="text" 
+                                           placeholder=" 検索ワードを入力 ">
+                                    <button>検索</button>
+                                  </form>
+                                  
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Categories widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">ジャンル</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="{% url 'novelapp:animal' %}">animal</a></li>
+                                        <li><a href="{% url 'novelapp:anime' %}">anime</a></li>
+                                        <li><a href="{% url 'novelapp:music' %}">music</a></li>
+                                        <li><a href="{% url 'novelapp:sports' %}">sports</a></li>
+                                        <li><a href="{% url 'novelapp:hobby' %}">hobby</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="{% url 'novelapp:food' %}">food</a></li>
+                                        <li><a href="{% url 'novelapp:plant' %}">plant</a></li>
+                                        <li><a href="{% url 'novelapp:man' %}">man</a></li>
+                                        <li><a href="{% url 'novelapp:woman' %}">lady</a></li>
+                                        <li><a href="{% url 'novelapp:other' %}">other</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Side Widget</div>
+                        <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use, and feature the Bootstrap 5 card component!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+    {% endblock %} 
